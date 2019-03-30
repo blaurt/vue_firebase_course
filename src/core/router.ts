@@ -1,24 +1,52 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "@/components/Home.vue";
+import AdList from "@/components/Ads/AdList.vue";
+import Ad from "@/components/Ads/Ad.vue";
+import NewAd from "@/components/Ads/NewAd.vue";
+import Login from "@/components/Auth/Login.vue";
+import Registration from "@/components/Auth/Register.vue";
+import Orders from "@/components/User/Orders.vue";
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: "/",
+      path: "",
       name: "home",
       component: Home
     },
     {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "../views/About.vue")
+      path: "/ad/:id",
+      name: "ad",
+      component: Ad
+    },
+    {
+      path: "/list",
+      name: "list",
+      component: AdList
+    },
+    {
+      path: "/new",
+      name: "newAd",
+      component: NewAd
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Registration
+    },
+    {
+      path: "/orders",
+      name: "orders",
+      component: Orders
     }
-  ]
+  ],
+  mode: "history"
 });
