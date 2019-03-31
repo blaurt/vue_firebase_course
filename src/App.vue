@@ -15,7 +15,9 @@
     </v-navigation-drawer>
     <v-toolbar app dark color="primary">
       <v-toolbar-side-icon @click="showDrawer = !showDrawer" class="hidden-md-and-up"></v-toolbar-side-icon>
-      <v-toolbar-title>Title</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link :to="{name: 'home'}" class="home-link">Vue Ads</router-link>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn flat v-for="link in links" :key="link.url" :to="link.url">
@@ -46,3 +48,11 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.home-link {
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
