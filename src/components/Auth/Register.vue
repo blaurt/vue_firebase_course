@@ -7,7 +7,7 @@
             <v-toolbar-title>Login form</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form @submit="handleSubmit" v-model="valid">
+            <v-form @submit="handleSubmit" v-model="valid" ref="form">
               <v-text-field
                 prepend-icon="person"
                 name="email"
@@ -38,7 +38,12 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" :disabled="!valid">Login</v-btn>
+            <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="!valid || loading"
+              @click="handleSubmit"
+            >Register</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -47,8 +52,8 @@
 </template>
 
 <script>
-const MIN_PASSWORD_LENGTH = 3;
-const MAX_PASSWORD_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 10;
 
 export default {
   data() {
@@ -60,6 +65,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
     MIN_PASSWORD_LENGTH: () => MIN_PASSWORD_LENGTH,
     rules() {
       return {
@@ -79,8 +87,14 @@ export default {
     }
   },
   methods: {
-    handleSubmit(data) {
-      console.log("submit data", data);
+    handleSubmit() {
+      if (this.$refs.form.validate()) {
+        const user = {
+          email: this.email,
+          password: this.password
+        };
+        this.$store.dispatch("registerUser", user).then(()=> this.$router.push('/'));
+      }
     }
   }
 };

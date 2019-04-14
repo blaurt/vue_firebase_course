@@ -1,16 +1,39 @@
+import * as fb from "firebase";
+
+class User {
+  id: any;
+  constructor(id) {
+    this.id = id;
+  }
+}
+
 const adsState: any = {
   state: {
     user: null
   },
   mutations: {
-    createAd(state, ad) {
-      state.ads.push(ad);
+    setUser(state, payload) {
+      state.user = payload;
     }
   },
   actions: {
-    createAd({ commit }, ad) {
-      ad.id = Math.random();
-      commit("createAd", ad);
+    registerUser: async function({ commit }, { email, password }) {
+      commit("clearError");
+      commit("setLoading", true);
+      try {
+        const user = await fb
+          .auth()
+          .createUserWithEmailAndPassword(email, password);
+        console.log("user", user);
+        user.user && commit("setUser", new User(user.user.uid));
+      } catch (error) {
+        console.log("error", error);
+
+        commit("setError", error.message);
+        throw error
+      } finally {
+        commit("setLoading", false);
+      }
     }
   },
   getters: {
