@@ -27,10 +27,8 @@ const adsState: any = {
         console.log("user", user);
         user.user && commit("setUser", new User(user.user.uid));
       } catch (error) {
-        console.log("error", error);
-
         commit("setError", error.message);
-        throw error
+        throw error;
       } finally {
         commit("setLoading", false);
       }
