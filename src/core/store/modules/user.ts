@@ -17,14 +17,30 @@ const adsState: any = {
     }
   },
   actions: {
-    registerUser: async function({ commit }, { email, password }) {
+    async registerUser({ commit }, { email, password }) {
       commit("clearError");
       commit("setLoading", true);
       try {
         const user = await fb
           .auth()
           .createUserWithEmailAndPassword(email, password);
-        console.log("user", user);
+        user.user && commit("setUser", new User(user.user.uid));
+      } catch (error) {
+        commit("setError", error.message);
+        throw error;
+      } finally {
+        commit("setLoading", false);
+      }
+    },
+    async loginUser({ commit }, { email, password }) {
+      commit("clearError");
+      commit("setLoading", true);
+      console.log('setLoading');
+      
+      try {
+        const user = await fb
+          .auth()
+          .signInWithEmailAndPassword(email, password);
         user.user && commit("setUser", new User(user.user.uid));
       } catch (error) {
         commit("setError", error.message);
@@ -35,7 +51,7 @@ const adsState: any = {
     }
   },
   getters: {
-    user(state: any) {
+    user(state) {
       return state.user;
     }
   }

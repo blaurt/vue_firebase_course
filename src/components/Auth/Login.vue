@@ -7,7 +7,7 @@
             <v-toolbar-title>Login form</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form @submit="handleSubmit" v-model="valid" validation>
+            <v-form ref="form" v-model="valid">
               <v-text-field
                 prepend-icon="person"
                 name="email"
@@ -28,7 +28,12 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" :disabled="!valid">Login</v-btn>
+            <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="!valid || loading"
+              @click="handleSubmit"
+            >Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -37,17 +42,20 @@
 </template>
 
 <script>
-const MIN_PASSWORD_LENGTH = 3;
-const MAX_PASSWORD_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 10;
 export default {
   data() {
     return {
-      email: "",
-      password: "",
+      email: "admin2@admin.com",
+      password: "admin2",
       valid: false
     };
   },
   computed: {
+    loading() {
+      return this.$store.getters.loading;
+    },
     MIN_PASSWORD_LENGTH: () => MIN_PASSWORD_LENGTH,
     rules() {
       return {
@@ -58,13 +66,9 @@ export default {
         password: [
           v => !!v.trim().length || "Password is required",
           v => {
-            console.log(
-              v.length > MIN_PASSWORD_LENGTH && v.length < MAX_PASSWORD_LENGTH
-            );
-
             return (
-              (v.length > MIN_PASSWORD_LENGTH &&
-                v.length < MAX_PASSWORD_LENGTH) ||
+              (v.length >= MIN_PASSWORD_LENGTH &&
+                v.length <= MAX_PASSWORD_LENGTH) ||
               `Password must be more ${MIN_PASSWORD_LENGTH} and less ${MAX_PASSWORD_LENGTH} symbols`
             );
           }
@@ -73,8 +77,16 @@ export default {
     }
   },
   methods: {
-    handleSubmit(data) {
-      console.log("submit data", data);
+    handleSubmit() {
+      if (this.$refs.form.validate()) {
+        const user = {
+          email: this.email,
+          password: this.password
+        };
+        this.$store
+          .dispatch("loginUser", user)
+          .then(() => this.$router.push("/"));
+      }
     }
   }
 };
