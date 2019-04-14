@@ -14,9 +14,16 @@ const adsState: any = {
   mutations: {
     setUser(state, payload) {
       state.user = payload;
-    }
+    },
   },
   actions: {
+    autologinUser({ commit }, payload) {
+      commit("setUser", payload);
+    },
+    logoutUser({ commit }) {
+      fb.auth().signOut();
+      commit("setUser", null);
+    },
     async registerUser({ commit }, { email, password }) {
       commit("clearError");
       commit("setLoading", true);
@@ -35,8 +42,6 @@ const adsState: any = {
     async loginUser({ commit }, { email, password }) {
       commit("clearError");
       commit("setLoading", true);
-      console.log('setLoading');
-      
       try {
         const user = await fb
           .auth()
@@ -53,6 +58,9 @@ const adsState: any = {
   getters: {
     user(state) {
       return state.user;
+    },
+    isUserLoggedIn(state) {
+      return state.user !== null;
     }
   }
 };

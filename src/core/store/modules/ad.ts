@@ -20,7 +20,8 @@ const defaults = {
       title: "3rd",
       description: "3333333333333",
       promo: true,
-      src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg"
+      src:
+        "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-f-5131451.png"
     }
   ]
 };
