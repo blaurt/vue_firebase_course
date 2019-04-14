@@ -29,18 +29,10 @@
 
 <script>
 export default {
-  data() {
-    return {
-      ads: [
-        {
-          id: 1,
-          title: "1st",
-          description: "11111111",
-          promo: false,
-          src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg"
-        }
-      ]
-    };
+  computed: {
+    ads() {
+      return this.$store.getters.ads;
+    }
   }
 };
 </script>

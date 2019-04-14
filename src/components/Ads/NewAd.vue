@@ -55,22 +55,22 @@ export default {
     return {
       title: "",
       description: "",
-      addToCarousel: false,
+      addToCarousel: true,
       valid: false
     };
   },
   methods: {
     handleSubmit() {
-      console.log("handleSubmit");
-
       if (this.$refs.form.validate()) {
         const ad = {
           title: this.title,
           description: this.description,
-          promo: this.addToCarousel
+          promo: this.addToCarousel,
+          src:
+            "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-f-5131451.png"
         };
 
-        console.log("ad", ad);
+        this.$store.dispatch("createAd", ad);
       }
     }
   }
