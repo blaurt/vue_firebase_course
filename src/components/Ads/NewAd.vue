@@ -4,7 +4,7 @@
       <v-flex xs12 md6 offset-sm3>
         <h1 class="text--secondary mb-3">Create new add</h1>
         <v-switch label="Add to carousel" v-model="addToCarousel" color="primary"></v-switch>
-        <v-form @submit="handleSubmit" v-model="valid" ref="form" validation>
+        <v-form v-model="valid" ref="form" validation>
           <v-text-field
             name="title"
             label="Add title"
@@ -42,7 +42,12 @@
         </v-layout>
         <v-layout row wrap>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="handleSubmit" :disabled="!valid">Create add</v-btn>
+          <v-btn
+            color="primary"
+            @click="handleSubmit"
+            :loading="loading"
+            :disabled="!valid || loading"
+          >Create add</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -59,18 +64,25 @@ export default {
       valid: false
     };
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading;
+    }
+  },
   methods: {
     handleSubmit() {
+      console.log("handleSubmit");
+
       if (this.$refs.form.validate()) {
         const ad = {
           title: this.title,
           description: this.description,
-          promo: this.addToCarousel,
-          src:
-            "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-f-5131451.png"
+          promo: this.addToCarousel
         };
 
-        this.$store.dispatch("createAd", ad);
+        this.$store
+          .dispatch("createAd", ad)
+          .then(() => this.$router.push({ name: "list" }));
       }
     }
   }

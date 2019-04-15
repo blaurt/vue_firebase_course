@@ -1,3 +1,30 @@
+import * as fb from "firebase";
+
+class Ad {
+  title: string;
+  description: string;
+  ownerId: string;
+  src: string;
+  promo: boolean;
+  id: string;
+
+  constructor({
+    title,
+    description,
+    ownerId,
+    src = "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-artist-5105679.jpeg",
+    promo = false,
+    id = ""
+  }) {
+    this.title = title;
+    this.description = description;
+    this.ownerId = ownerId;
+    this.src = src;
+    this.promo = promo;
+    this.id = id;
+  }
+}
+
 const defaults = {
   ads: [
     {
@@ -28,17 +55,57 @@ const defaults = {
 
 const adsState: any = {
   state: {
-    ads: defaults.ads
+    ads: []
   },
   mutations: {
     createAd(state, ad) {
       state.ads.push(ad);
+    },
+    setAds(state, payload) {
+      state.ads = payload;
     }
   },
   actions: {
-    createAd({ commit }, ad) {
-      ad.id = Math.random();
-      commit("createAd", ad);
+    async createAd({ commit, getters }, ad) {
+      commit("clearError");
+      commit("setLoading", true);
+      try {
+        const newAd = new Ad({ ...ad, ownerId: getters.user.id });
+        console.log("getters.user.id", getters.user.id);
+
+        const fbResponse = await fb
+          .database()
+          .ref("ads")
+          .push(newAd);
+        commit("createAd", { ...newAd, id: fbResponse.key });
+      } catch (error) {
+        throw error;
+      } finally {
+        commit("setLoading", false);
+      }
+    },
+    async fetchAds({ commit }) {
+      commit("clearError");
+      commit("setLoading", true);
+
+      try {
+        const fbResponse = await fb
+          .database()
+          .ref("ads")
+          .once("value");
+        const ads = fbResponse.val();
+        console.log("ads", ads);
+
+        const adsArray = [] as any;
+        for (const key in ads) {
+          adsArray.push({...ads[key], id:key});
+        }
+        commit("setAds", adsArray);
+      } catch (error) {
+        throw error;
+      } finally {
+        commit("setLoading", false);
+      }
     }
   },
   getters: {

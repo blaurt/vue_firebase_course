@@ -1,7 +1,7 @@
 import Vue from "vue";
 import "./plugins/vuetify";
 import App from "./App.vue";
-import router from "./core/router";
+import router from "./core/router/router";
 import store from "./core/store/store";
 import "./registerServiceWorker";
 import * as fb from "firebase";
@@ -12,7 +12,7 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  created() {
+  beforeCreate() {
     const firebaseConfig = {
       apiKey: "AIzaSyCQdyyr_JX6Gvoi0ISyYhpACi2BVIdDS_M",
       authDomain: "wfm-ads-340bd.firebaseapp.com",
@@ -29,5 +29,7 @@ new Vue({
         this.$store.dispatch('autologinUser', user)
       }
     })
+
+    this.$store.dispatch('fetchAds')
   }
 }).$mount("#app");

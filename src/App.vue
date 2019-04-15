@@ -44,14 +44,7 @@
     </v-content>
 
     <template v-if="error">
-      <v-snackbar
-        :multi-line="mode === 'multi-line'"
-        :timeout="3000"
-        :bottom="true"
-        :right="true"
-        color="error"
-        :value="true"
-      >
+      <v-snackbar :timeout="3000" :bottom="true" :right="true" color="error" :value="true">
         {{ error }}
         <v-btn dark flat @click="closeSnackbar">Close</v-btn>
       </v-snackbar>
@@ -93,8 +86,9 @@ export default {
       this.$store.dispatch("clearError");
     },
     onLogout() {
-      this.$store.dispatch("logoutUser")
-      .then(()=>this.$router.push({name: 'home'}));
+      this.$store
+        .dispatch("logoutUser")
+        .then(() => this.$router.push({ name: "home" }));
     }
   }
 };
