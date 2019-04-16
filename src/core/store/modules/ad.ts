@@ -93,7 +93,7 @@ const adsState: any = {
           .database()
           .ref(`ads/${fbResponse.key}`)
           .update({
-            imageSrc
+            src: imageSrc
           });
         commit("createAd", { ...newAd, id: fbResponse.key });
       } catch (error) {
