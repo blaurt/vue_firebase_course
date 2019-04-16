@@ -12,7 +12,7 @@ class Ad {
     title,
     description,
     ownerId,
-    src = "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-artist-5105679.jpeg",
+    src = "",
     promo = false,
     id = ""
   }) {
@@ -32,8 +32,7 @@ const defaults = {
       title: "1st",
       description: "11111111",
       promo: false,
-      src:
-        "http://img10.joyreactor.cc/pics/post/Tofu93-furry-artist-furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-5131385.png"
+      src: ""
     },
     {
       id: 2,
@@ -47,8 +46,7 @@ const defaults = {
       title: "3rd",
       description: "3333333333333",
       promo: true,
-      src:
-        "http://img10.reactor.cc/pics/post/furry-%D1%84%D1%8D%D0%BD%D0%B4%D0%BE%D0%BC%D1%8B-furry-art-furry-f-5131451.png"
+      src: ""
     }
   ]
 };
@@ -66,17 +64,37 @@ const adsState: any = {
     }
   },
   actions: {
-    async createAd({ commit, getters }, ad) {
+    async createAd({ commit, getters }, payload) {
       commit("clearError");
       commit("setLoading", true);
       try {
-        const newAd = new Ad({ ...ad, ownerId: getters.user.id });
-        console.log("getters.user.id", getters.user.id);
-
+        const newAd = new Ad({ ...payload, ownerId: getters.user.id });
+        const imageExt = payload.image.name.slice(
+          payload.image.name.lastIndexOf(".") + 1
+        );
+        // create new entry
         const fbResponse = await fb
           .database()
           .ref("ads")
           .push(newAd);
+        const fileName = `ads/${fbResponse.key}.${imageExt}`;
+        // upload new image
+        await fb
+          .storage()
+          .ref(fileName)
+          .put(payload.image);
+        // get image url
+        const imageSrc = await fb
+          .storage()
+          .ref(fileName)
+          .getDownloadURL();
+        // update db entry
+        await fb
+          .database()
+          .ref(`ads/${fbResponse.key}`)
+          .update({
+            imageSrc
+          });
         commit("createAd", { ...newAd, id: fbResponse.key });
       } catch (error) {
         throw error;
@@ -94,11 +112,9 @@ const adsState: any = {
           .ref("ads")
           .once("value");
         const ads = fbResponse.val();
-        console.log("ads", ads);
-
         const adsArray = [] as any;
         for (const key in ads) {
-          adsArray.push({...ads[key], id:key});
+          adsArray.push({ ...ads[key], id: key });
         }
         commit("setAds", adsArray);
       } catch (error) {
