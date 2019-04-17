@@ -5,9 +5,10 @@ import router from "./core/router/router";
 import store from "./core/store/store";
 import "./registerServiceWorker";
 import * as fb from "firebase";
+import BuyModalComponent from './components/Shared/BuyModal.vue';
 
 Vue.config.productionTip = false;
-
+Vue.component('app-buy-modal', BuyModalComponent)
 new Vue({
   router,
   store,

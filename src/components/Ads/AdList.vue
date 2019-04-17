@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row>
-      <v-flex xs12 md6 offset-sm3>
+      <v-flex xs12 md6 offset-sm3 v-if="!loading && myAds.length !==0">
         <h1 class="text--secondary mb-3">Ad list</h1>
         <v-card v-for="ad in ads" class="elevation-10 mb-3" :key="ad.id">
           <v-layout row wrap>
@@ -23,6 +23,12 @@
           </v-layout>
         </v-card>
       </v-flex>
+      <v-flex xs12 class="text-xs-center" v-else-if="!loading && myAds.length == 0">
+        <h1 class="text--primary">You have no ads</h1>
+      </v-flex>
+      <v-flex v-else>
+        <h1 class="text--primary">Loading</h1>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -32,6 +38,9 @@ export default {
   computed: {
     ads() {
       return this.$store.getters.ads;
+    },
+    loading() {
+      return this.$store.getters.loading;
     }
   }
 };

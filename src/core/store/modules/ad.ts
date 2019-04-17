@@ -25,32 +25,6 @@ class Ad {
   }
 }
 
-const defaults = {
-  ads: [
-    {
-      id: 1,
-      title: "1st",
-      description: "11111111",
-      promo: false,
-      src: ""
-    },
-    {
-      id: 2,
-      title: "2nd",
-      description: "22222222222",
-      promo: true,
-      src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg"
-    },
-    {
-      id: 3,
-      title: "3rd",
-      description: "3333333333333",
-      promo: true,
-      src: ""
-    }
-  ]
-};
-
 const adsState: any = {
   state: {
     ads: []
@@ -61,6 +35,11 @@ const adsState: any = {
     },
     setAds(state, payload) {
       state.ads = payload;
+    },
+    updateAd(state, { title, description, id }) {
+      const ad = state.ads.find(a => a.id == id);
+      ad.title = title;
+      ad.description = description;
     }
   },
   actions: {
@@ -69,6 +48,7 @@ const adsState: any = {
       commit("setLoading", true);
       try {
         const newAd = new Ad({ ...payload, ownerId: getters.user.id });
+        console.log("newAd", newAd);
         const imageExt = payload.image.name.slice(
           payload.image.name.lastIndexOf(".") + 1
         );
@@ -122,6 +102,31 @@ const adsState: any = {
       } finally {
         commit("setLoading", false);
       }
+    },
+    async updateAd({ commit }, { title, description, id }) {
+      commit("clearError");
+      commit("setLoading", true);
+
+      try {
+        await fb
+          .database()
+          .ref("ads")
+          .child(id)
+          .update({
+            title,
+            description
+          });
+        commit("updateAd", {
+          id,
+          title,
+          description
+        });
+      } catch (error) {
+        commit("setError", error.message);
+        throw error;
+      } finally {
+        commit("setLoading", false);
+      }
     }
   },
   getters: {
@@ -131,8 +136,8 @@ const adsState: any = {
     promoAds(state: any) {
       return state.ads.filter(item => item.promo);
     },
-    myAds(state) {
-      return state;
+    myAds(state, getters) {
+      return state.ads.filter(ad=> ad.ownerId == getters.user.id);
     },
     getById(state) {
       return adId => {
