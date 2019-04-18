@@ -41,6 +41,9 @@ export default {
     },
     loading() {
       return this.$store.getters.loading;
+    },
+    myAds() {
+      return this.$store.getters.myAds;
     }
   }
 };

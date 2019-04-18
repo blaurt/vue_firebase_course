@@ -7,7 +7,7 @@
         <v-layout row>
           <v-flex xs12>
             <v-card-title>
-              <h1 class="text--primary">Edit ad</h1>
+              <h1 class="text--primary">Do you want to buy it?</h1>
             </v-card-title>
           </v-flex>
         </v-layout>
@@ -15,13 +15,7 @@
         <v-layout row>
           <v-flex xs12>
             <v-card-text>
-              <v-text-field
-                name="title"
-                label="Title"
-                type="text"
-                v-model="editedTitle"
-                :rules="[v=>!!v]"
-              ></v-text-field>
+              <v-text-field name="name" label="Name" type="text" v-model="name" :rules="[v=>!!v]"></v-text-field>
               <v-text-field
                 name="description"
                 label="Description"
@@ -37,8 +31,14 @@
           <v-flex xs12>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat @click="onCancel">Cancel</v-btn>
-              <v-btn class="success" flat @click="onSave">Save</v-btn>
+              <v-btn flat @click="onCancel" :disabled="localLoading">Cancel</v-btn>
+              <v-btn
+                class="success"
+                flat
+                @click="onSave"
+                :disabled="localLoading"
+                :loading="localLoading"
+              >BUY IT!</v-btn>
             </v-card-actions>
           </v-flex>
         </v-layout>
@@ -53,22 +53,34 @@ export default {
   data() {
     return {
       dialog: false,
-      editedTitle: this.ad.title,
-      editedDescription: this.ad.description
+      name: "",
+      editedDescription: "",
+      localLoading: false
     };
   },
   methods: {
     onCancel() {
       this.dialog = false;
+      this.name = "";
+      this.editedDescription = "";
     },
     onSave() {
-      const payload = {
-        id: this.ad.id,
-        title: this.editedTitle,
-        description: this.editedDescription
-      };
-      this.dialog = false;
-      this.$store.dispatch("updateAd", payload);
+
+      if (this.name && this.editedDescription) {
+        this.localLoading = true;
+        const payload = {
+          id: this.ad.id,
+          name: this.name,
+          description: this.editedDescription,
+          ownerId: this.ad.ownerId
+        };
+        this.$store.dispatch("createOrder", payload).then(() => {
+          this.name = "";
+          this.editedDescription = "";
+          this.localLoading = false;
+          this.dialog = false;
+        });
+      }
     }
   }
 };

@@ -46,9 +46,9 @@ const adsState: any = {
     async createAd({ commit, getters }, payload) {
       commit("clearError");
       commit("setLoading", true);
+
       try {
-        const newAd = new Ad({ ...payload, ownerId: getters.user.id });
-        console.log("newAd", newAd);
+        const newAd = new Ad({ ...payload, ownerId: getters.user.uid });
         const imageExt = payload.image.name.slice(
           payload.image.name.lastIndexOf(".") + 1
         );
@@ -137,7 +137,7 @@ const adsState: any = {
       return state.ads.filter(item => item.promo);
     },
     myAds(state, getters) {
-      return state.ads.filter(ad=> ad.ownerId == getters.user.id);
+      return state.ads.filter(ad => ad.ownerId == getters.user.id);
     },
     getById(state) {
       return adId => {

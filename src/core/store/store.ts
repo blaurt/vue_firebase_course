@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import AdModule from "./modules/ad";
 import UserModule from "./modules/user";
+import OrdersModule from "./modules/orders";
 
 import sharedModule from "./shared";
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
   modules: {
     AdModule,
     UserModule,
-    sharedModule
+    sharedModule,
+    OrdersModule
   }
 });

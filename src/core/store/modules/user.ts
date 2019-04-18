@@ -1,10 +1,11 @@
 import * as fb from "firebase";
 
 class User {
-  id: any;
   constructor(id) {
     this.id = id;
   }
+  id;
+  uid;
 }
 
 const adsState: any = {
@@ -14,7 +15,7 @@ const adsState: any = {
   mutations: {
     setUser(state, payload) {
       state.user = payload;
-    },
+    }
   },
   actions: {
     autologinUser({ commit }, payload) {

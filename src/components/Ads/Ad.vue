@@ -17,7 +17,7 @@
           </v-card-actions>
         </v-card>
         <div v-else>
-          <v-progress-circular :width="3" :size="100" :color="'green'" indeterminate></v-progress-circular>
+          <v-progress-circular :width="4" :size="100" :color="'green'" indeterminate></v-progress-circular>
         </div>
       </v-flex>
     </v-layout>
